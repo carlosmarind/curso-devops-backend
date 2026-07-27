@@ -1,0 +1,11 @@
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(process.env.PORT ?? 3000);
+  console.log(
+    `Estamos en el ambiente correspondiente a ${process.env.NODE_ENV || 'dev'} y ejecutandonos en el puerto ${process.env.PORT || '3000'} `,
+  );
+}
+void bootstrap();
