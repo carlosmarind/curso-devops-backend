@@ -5,4 +5,17 @@ export declare class AppController {
     getHome(): string;
     getHello(): string;
     getHi(): string;
+    obtenerPokemon(nombre: string): Promise<{
+        error: string;
+        id?: undefined;
+        nombre?: undefined;
+        imagen?: undefined;
+        tipos?: undefined;
+    } | {
+        id: any;
+        nombre: any;
+        imagen: any;
+        tipos: any;
+        error?: undefined;
+    } | null>;
 }

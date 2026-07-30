@@ -15,6 +15,26 @@ let AppService = class AppService {
     getHi() {
         return 'Hi there!!!';
     }
+    async buscarPokemon(nombreOrId) {
+        if (!nombreOrId)
+            return null;
+        try {
+            const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${nombreOrId.toLowerCase().trim()}`);
+            if (!response.ok) {
+                return { error: 'Pokémon no encontrado ❌' };
+            }
+            const data = await response.json();
+            return {
+                id: data.id,
+                nombre: data.name.toUpperCase(),
+                imagen: data.sprites.other['official-artwork'].front_default,
+                tipos: data.types.map((t) => t.type.name).join(', '),
+            };
+        }
+        catch (error) {
+            return { error: 'Error al conectar con la PokeAPI' };
+        }
+    }
     getPokemonIndex() {
         return `
     <!DOCTYPE html>
@@ -33,6 +53,7 @@ let AppService = class AppService {
           align-items: center;
           min-height: 100vh;
           margin: 0;
+          padding: 20px 0;
         }
         .pokedex-card {
           background: #dc0a2d;
@@ -40,7 +61,7 @@ let AppService = class AppService {
           border-radius: 20px;
           padding: 25px;
           width: 90%;
-          max-width: 450px;
+          max-width: 480px;
           box-shadow: 0 10px 0 #8b0000, 0 15px 25px rgba(0,0,0,0.5);
         }
         .top-lights {
@@ -136,6 +157,21 @@ let AppService = class AppService {
         .calc-inputs input::placeholder {
           color: #006622;
         }
+        /* Estilos del resultado del Pokémon */
+        .poke-card {
+          background: #000;
+          border: 1px dashed #00ff66;
+          border-radius: 6px;
+          padding: 10px;
+          margin-top: 10px;
+          text-align: center;
+        }
+        .poke-img {
+          width: 140px;
+          height: 140px;
+          object-fit: contain;
+          filter: drop-shadow(0 0 8px #00ff66);
+        }
       </style>
     </head>
     <body>
@@ -152,6 +188,19 @@ let AppService = class AppService {
           <p style="text-align:center; font-size:0.8rem; color:#fff;">Rutas activas en el servidor:</p>
           
           <ul class="endpoint-list">
+            <!-- BUSCADOR DE POKÉMON -->
+            <li class="endpoint-item">
+              <span class="desc" style="color: #00ff66; font-weight: bold;">🔍 Buscador PokéAPI (Imagen HD):</span>
+              <div class="calc-box">
+                <div class="calc-inputs">
+                  <input type="text" id="pokeInput" placeholder="Ej: pikachu o 25">
+                </div>
+                <button type="button" class="btn" onclick="buscarPokemon()">Buscar Pokémon ⚡</button>
+                <div id="pokeResult"></div>
+              </div>
+            </li>
+
+            <!-- SALUDOS -->
             <li class="endpoint-item">
               <a class="btn" href="/saludo" target="_blank">GET /saludo</a>
               <span class="desc">Retorna un saludo formal.</span>
@@ -160,6 +209,8 @@ let AppService = class AppService {
               <a class="btn" href="/hi" target="_blank">GET /hi</a>
               <span class="desc">Retorna un saludo casual.</span>
             </li>
+
+            <!-- MÓDULO CÁLCULO -->
             <li class="endpoint-item">
               <span class="desc" style="color: #00ff66; font-weight: bold;">⚡ Módulo de Cálculo:</span>
               <form class="calc-box" action="/calculo" method="GET" target="_blank">
@@ -179,6 +230,41 @@ let AppService = class AppService {
           </ul>
         </div>
       </div>
+
+      <!-- SCRIPT CLIENTE -->
+      <script>
+        async function buscarPokemon() {
+          const input = document.getElementById('pokeInput').value;
+          const container = document.getElementById('pokeResult');
+
+          if (!input) {
+            container.innerHTML = '<p style="color: #ff5555; font-size: 0.8rem; margin-top: 8px;">Escribe un nombre o ID.</p>';
+            return;
+          }
+
+          container.innerHTML = '<p style="color: #00ff66; font-size: 0.8rem; margin-top: 8px;">Consultando Pokédex...</p>';
+
+          try {
+            const res = await fetch(\`/pokemon?nombre=\${input}\`);
+            const data = await res.json();
+
+            if (data.error) {
+              container.innerHTML = \`<p style="color: #ff5555; font-size: 0.8rem; margin-top: 8px;">\${data.error}</p>\`;
+              return;
+            }
+
+            container.innerHTML = \`
+              <div class="poke-card">
+                <h3 style="color: #fff; margin: 4px 0;">#\${data.id} - \${data.nombre}</h3>
+                <img class="poke-img" src="\${data.imagen}" alt="\${data.nombre}" />
+                <p style="color: #aaa; font-size: 0.75rem; margin: 4px 0;">TIPOS: \${data.tipos}</p>
+              </div>
+            \`;
+          } catch (err) {
+            container.innerHTML = '<p style="color: #ff5555; font-size: 0.8rem; margin-top: 8px;">Error de conexión.</p>';
+          }
+        }
+      </script>
     </body>
     </html>
     `;
