@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output and test coverage
+dist/
+coverage/
+
+# Local documentation
+docs/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Caches and temporary files
+.cache/
+.eslintcache
+*.tsbuildinfo
+*.tmp
+*.temp
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating system files
+.DS_Store
+Thumbs.db
