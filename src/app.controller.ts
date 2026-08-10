@@ -1,9 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
+
+  @Get()
+  getHome(): string {
+    return this.appService.getPokemonIndex();
+  }
 
   @Get('/saludo')
   getHello(): string {
@@ -13,5 +18,10 @@ export class AppController {
   @Get('/hi')
   getHi(): string {
     return this.appService.getHi();
+  }
+
+  @Get('pokemon')
+  async obtenerPokemon(@Query('nombre') nombre: string) {
+    return await this.appService.buscarPokemon(nombre);
   }
 }
