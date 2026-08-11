@@ -1,6 +1,11 @@
 pipeline {
 
-    agent any
+    agent {
+        docker {
+            image "node:24"
+            reuseNode true
+        }
+    }
 
     stages {
         stage('CI - instalalar dependencias'){
