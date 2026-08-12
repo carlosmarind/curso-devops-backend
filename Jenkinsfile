@@ -33,13 +33,26 @@ pipeline {
                 }
             }
         }
-        stage('CD - Distribuir Imagen docker'){
+        stage('CD - Construir Imagen'){
             steps {
                 sh 'docker build -t curso-devops-backend:latest .'
                 sh 'docker tag curso-devops-backend ghcr.io/carlosmarind/curso-devops-backend'
                 sh 'docker tag curso-devops-backend carlosmarind/curso-devops-backend'
-                sh 'docker push carlosmarind/curso-devops-backend'
-                sh 'docker push carlosmarind/ghcr.io/carlosmarind/curso-devops-backend'
+            }
+        }
+        stage('CD - Distribuir Imagen dockerhub'){
+            steps {
+                docker.withRegistry('https://index.docker.io/v1/','dh-credencial'){
+                    sh 'docker push carlosmarind/curso-devops-backend'
+                }
+                
+            }
+        }
+        stage('CD - Distribuir Imagen github'){
+            steps {
+                docker.withRegistry('https://ghcr.io','dh-credencial'){
+                    sh 'docker push ghcr.io/carlosmarind/curso-devops-backend'
+                }
             }
         }
     }
