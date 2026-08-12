@@ -36,6 +36,10 @@ pipeline {
         stage('CD - Distribuir Imagen docker'){
             steps {
                 sh 'docker build -t curso-devops-backend:latest .'
+                sh 'docker tag curso-devops-backend ghcr.io/carlosmarind/curso-devops-backend'
+                sh 'docker tag curso-devops-backend carlosmarind/curso-devops-backend'
+                sh 'docker push carlosmarind/curso-devops-backend'
+                sh 'docker push carlosmarind/ghcr.io/carlosmarind/curso-devops-backend'
             }
         }
     }
