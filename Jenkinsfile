@@ -53,7 +53,7 @@ pipeline {
         stage('CD - Distribuir Imagen github'){
             steps {
                 script{
-                    docker.withRegistry('https://ghcr.io','dh-credencial'){
+                    docker.withRegistry('https://ghcr.io','gh-credencial'){
                         sh 'docker push ghcr.io/carlosmarind/curso-devops-backend'
                     }
                 }
