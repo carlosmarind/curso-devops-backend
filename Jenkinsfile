@@ -1,12 +1,10 @@
 pipeline {
-
     agent {
         docker {
             image "node:24"
             reuseNode true
         }
     }
-
     stages {
         stage('CI - instalalar dependencias'){
             steps {
@@ -26,6 +24,11 @@ pipeline {
         stage('CI - Construir o build'){
             steps {
                 sh 'npm run build'
+            }
+        }
+        stage('CD - construir imagen docker'){
+            steps {
+                sh 'docker build -t curso-devops-backend:latest .'
             }
         }
     }
