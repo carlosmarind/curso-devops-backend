@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-//import request from 'supertest';
+import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
 
@@ -22,5 +22,12 @@ describe('AppController (e2e)', () => {
 
   it('should be defined', () => {
     expect(app).toBeDefined();
+  });
+
+  test('GET /saludo retorna el saludo principal', async () => {
+    await request(app.getHttpServer())
+      .get('/saludo')
+      .expect(200)
+      .expect('Hello World!');
   });
 });
