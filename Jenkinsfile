@@ -1,11 +1,10 @@
 pipeline{
     agent any
-
-    stages{
-        stage('CI - instalar dependencias'){
-            steps{
-                sh "echo 'Instalando dependencias'"
-            }
+    stages {
+     stage('CI - Instalar dependencias'){
+        steps{
+            sh 'echo "ksenlksdfmsmdfsd"' 
         }
+     }   
     }
 }
