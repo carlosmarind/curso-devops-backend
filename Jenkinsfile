@@ -1,7 +1,7 @@
 pipeline{
     agent {
         docker {
-            imagen "node:24"
+            image "node:24"
             reuseNode true
         }
     }
