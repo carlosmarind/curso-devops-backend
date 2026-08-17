@@ -61,7 +61,7 @@ pipeline {
                 }
                 stage('CI - Ejecutar los test'){
                     steps {
-                        sh 'npm run test'
+                        sh 'npm run test:cov'
                     }
                 }
                 stage('CI - Construir o build'){
