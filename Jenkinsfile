@@ -87,6 +87,19 @@ pipeline {
                         }
                     }
                 }
+                stage('Validacion de puerta de calidad'){
+                    options{
+                        timeout(time: 1, unit: "MINUTES")
+                    }
+                    steps{
+                        script{
+                            def qualityGate = waitForQualityGate(); 
+                            if(qualityGate.status != 'OK'){
+                                error "La puerta de calidad ha fallado ${qualityGate.status}"
+                            }
+                        }
+                    }
+                }
             }
         }
         stage("CD de la aplicacion - build dockerfile") {
