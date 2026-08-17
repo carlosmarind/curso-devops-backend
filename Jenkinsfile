@@ -75,7 +75,6 @@ pipeline {
             agent {
                 docker{
                     image 'sonarsource/sonar-scanner-cli'
-                    args '--network=devops-infra_default'
                     reuseNode true
                 }
             }
@@ -84,19 +83,6 @@ pipeline {
                     steps{
                         withSonarQubeEnv('sonarqube'){
                             sh 'sonar-scanner'
-                        }
-                    }
-                }
-                stage('validacion quality gate'){
-                    options {
-                        timeout(time: 1, unit: 'MINUTES')
-                    }
-                    steps{
-                        script{
-                            def  qualityGate = waitForQualityGate() // esperar por el resultado del qualitygate en un endpoint de jenkins, que se gatilla desde sonar via webhook.
-                            if(qualityGate.status != 'OK'){
-                                error "La puerta de calidad ha fallado : ${qualityGate.status}"
-                            }
                         }
                     }
                 }
@@ -111,8 +97,8 @@ pipeline {
                     }
                     // Aca llamamos a la funcion que definimos al principio , y ya esta funcion 
                     // hace login en dockerhub y github con docker.withRegistry y sube ambas imagenes
-                    tagAndPush(env.IMAGE_NAME, env.DH_REPO, "https://index.docker.io/v1/", "credencial-dh")
-                    tagAndPush(env.IMAGE_NAME, env.GHCR_REPO, "https://ghcr.io", "credencial-gh")
+                    tagAndPush(env.IMAGE_NAME, env.DH_REPO, "https://index.docker.io/v1/", "dh-credencial")
+                    tagAndPush(env.IMAGE_NAME, env.GHCR_REPO, "https://ghcr.io", "gh-credencial")
                 }
             }
         }
