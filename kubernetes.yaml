@@ -30,7 +30,7 @@ metadata:
   labels:
     app: curso-devops-stack
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: curso-devops-stack
@@ -67,3 +67,18 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "1000m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: curso-devops-service
+  namespace: curso-devops
+  labels:
+    app: curso-devops-stack
+spec:
+  selector:
+     app: curso-devops-stack
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
