@@ -4,7 +4,7 @@ describe('CalculoService', () => {
   const service = new AppService();
 
   test('Hello', () => {
-    expect(service.getHello()).toBe('Hello World!');
+    expect(service.getHello()).toBe('Hola mundo!');
   });
   test('Hi', () => {
     expect(service.getHi()).toBe('Hi there!!!');
