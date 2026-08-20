@@ -24,6 +24,9 @@ pipeline {
         IMAGE_NAME = "curso-devops-backend"
         DH_REPO    = "carlosmarind/curso-devops-backend"
         GHCR_REPO  = "ghcr.io/carlosmarind/curso-devops-backend"
+        K8S_NAMESPACE  = "curso-devops"
+        K8S_DEPLOYMENT = "curso-devops-deployment"
+        K8S_CONTAINER  = "contenedor-curso-devops"
     }
 
 
@@ -113,6 +116,27 @@ pipeline {
                     // hace login en dockerhub y github con docker.withRegistry y sube ambas imagenes
                     tagAndPush(env.IMAGE_NAME, env.DH_REPO, "https://index.docker.io/v1/", "dh-credencial")
                     tagAndPush(env.IMAGE_NAME, env.GHCR_REPO, "https://ghcr.io", "gh-credencial")
+                }
+            }
+        }
+        stage("CD - Despliegue continuo en develop"){
+            agent {
+                docker {
+                    image 'alpine/k8s:1.34.6'
+                    reuseNode true
+                }
+            }
+            steps{
+                script {
+                    if (!env.APP_SEMANTIC_VERSION?.trim()) {
+                        error("APP_SEMANTIC_VERSION no definida para el despliegue")
+                    }
+                }
+                withKubeConfig([credentialsId: 'credencial-k8']) {
+                    sh """
+                        kubectl -n ${env.K8S_NAMESPACE} set image deployment/${env.K8S_DEPLOYMENT} ${env.K8S_CONTAINER}=${env.DH_REPO}:${env.APP_SEMANTIC_VERSION}
+                        kubectl -n ${env.K8S_NAMESPACE} rollout status deployment/${env.K8S_DEPLOYMENT}
+                    """
                 }
             }
         }
